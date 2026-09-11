@@ -45,6 +45,7 @@ async def test_executar_com_tipo_reconhecido_de_primeira_retorna_veredicto_com_t
     veredicto = await caso_de_uso.executar(_ENDERECO)
 
     assert veredicto.tipo_de_arquivo is TipoDeArquivo.PDF
+    assert veredicto.tamanho_em_bytes == len(b"%PDF-1.4")
     assert leitor.chamadas == [_JANELA_DE_CABECALHO_EM_BYTES]
 
 

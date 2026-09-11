@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from ocr_reader.application.casos_de_uso.validar_documento_remoto import ValidarDocumentoRemoto
 from ocr_reader.domain.modelos.endereco_de_blob import EnderecoDeBlob
 from ocr_reader.domain.modelos.extracao import IdentificadorDaExtracao
+from ocr_reader.domain.modelos.tipo_de_arquivo import TipoDeArquivo
 from ocr_reader.domain.portas.servico_de_ocr import ServicoDeOcr
 
 
@@ -17,9 +18,13 @@ class ExtracaoSolicitada:
     Attributes:
         identificador: Identificador da extração, para consulta posterior via
             `ConsultarExtracaoDeTexto`.
+        tipo_de_arquivo: Tipo de arquivo detectado no documento validado.
+        tamanho_em_bytes: Tamanho total do documento, em bytes.
     """
 
     identificador: IdentificadorDaExtracao
+    tipo_de_arquivo: TipoDeArquivo
+    tamanho_em_bytes: int
 
 
 class SolicitarExtracaoDeTexto:
@@ -50,6 +55,10 @@ class SolicitarExtracaoDeTexto:
             DocumentoInacessivel: se o blob não pôde ser lido.
             ServicoDeOcrIndisponivel: se a submissão ao serviço de OCR falhar.
         """
-        await self._validar_documento_remoto.executar(endereco)
+        veredicto = await self._validar_documento_remoto.executar(endereco)
         identificador = await self._servico_de_ocr.solicitar_leitura(endereco)
-        return ExtracaoSolicitada(identificador=identificador)
+        return ExtracaoSolicitada(
+            identificador=identificador,
+            tipo_de_arquivo=veredicto.tipo_de_arquivo,
+            tamanho_em_bytes=veredicto.tamanho_em_bytes,
+        )

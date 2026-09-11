@@ -23,6 +23,7 @@ from ocr_reader.infrastructure.azure.servico_de_ocr_document_intelligence import
 from ocr_reader.infrastructure.configuracao import Configuracao
 from ocr_reader.infrastructure.deteccao.detector_libmagic import DetectorLibmagic
 from ocr_reader.infrastructure.http.leitor_de_bytes_httpx import LeitorDeBytesHttpx
+from ocr_reader.infrastructure.observabilidade.log_estruturado import configurar_log
 from ocr_reader.interfaces.api.rotas.extracoes import roteador as roteador_de_extracoes
 from ocr_reader.interfaces.api.tratadores_de_erro import registrar_tratadores_de_erro
 
@@ -65,6 +66,7 @@ async def _ciclo_de_vida(app: FastAPI) -> AsyncIterator[None]:
 
 def criar_aplicacao() -> FastAPI:
     """Constrói a instância da aplicação FastAPI com rotas e tratadores de erro registrados."""
+    configurar_log()
     app = FastAPI(title="ocr-reader", lifespan=_ciclo_de_vida)
     app.include_router(roteador_de_extracoes)
     registrar_tratadores_de_erro(app)
