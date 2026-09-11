@@ -1,0 +1,47 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(/bin/ls:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(tree:*)",
+      "Bash(pwd)",
+      "Bash(which:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git remote:*)",
+      "Bash(git -C /Users/mauricio/Documents/orc status:*)",
+      "Bash(git -C /Users/mauricio/Documents/orc diff:*)",
+      "Bash(git -C /Users/mauricio/Documents/orc log:*)",
+      "Bash(git -C /Users/mauricio/Documents/orc show:*)",
+      "Bash(git -C /Users/mauricio/Documents/orc branch:*)",
+      "Bash(git -C /Users/mauricio/Documents/orc remote:*)",
+      "Bash(python3 -m pytest:*)",
+      "Bash(pytest:*)",
+      "Bash(ruff:*)",
+      "Bash(black:*)",
+      "Bash(mypy:*)",
+      "Bash(uv run:*)",
+      "Bash(maestri list)",
+      "Bash(maestri ask:*)",
+      "Bash(maestri check:*)"
+    ],
+    "deny": [
+      "Bash(git push:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean:*)",
+      "Bash(rm -rf:*)",
+      "Read(/Users/mauricio/Documents/orc/.env)",
+      "Read(/Users/mauricio/Documents/orc/.env.*)"
+    ]
+  }
+}
