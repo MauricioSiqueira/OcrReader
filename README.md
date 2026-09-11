@@ -131,38 +131,62 @@ Os testes cobrem:
 
 ## Configuração
 
-### Variáveis de Ambiente
+Todos os parâmetros usam prefixo `OCR_READER_` e podem ser configurados de duas formas:
 
-Todos os parâmetros podem ser configurados via variáveis com prefixo `OCR_READER_`:
+### Método 1: Arquivo `.env` (recomendado)
+
+1. Copie o modelo:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edite `.env` com seus valores:
+   ```env
+   OCR_READER_HOSTS_PERMITIDOS=["*.blob.core.windows.net"]
+   OCR_READER_ENDPOINT_DO_DOCUMENT_INTELLIGENCE=https://seu-recurso.cognitiveservices.azure.com
+   OCR_READER_CHAVE_DO_DOCUMENT_INTELLIGENCE=sua-chave-de-acesso-aqui
+   ```
+
+3. Suba a API:
+   ```bash
+   uv run uvicorn ocr_reader.interfaces.api.aplicacao:app
+   ```
+
+⚠️ **Importante:** Nunca comite o arquivo `.env` (está no `.gitignore`). Ele permanece apenas na sua máquina.
+
+### Método 2: Variáveis de Ambiente (`export`)
+
+Alternativamente, use `export` para cada variável:
+
+```bash
+export OCR_READER_HOSTS_PERMITIDOS='["*.blob.core.windows.net"]'
+export OCR_READER_ENDPOINT_DO_DOCUMENT_INTELLIGENCE="https://seu-recurso.cognitiveservices.azure.com"
+export OCR_READER_CHAVE_DO_DOCUMENT_INTELLIGENCE="sua-chave-de-acesso-aqui"
+uv run uvicorn ocr_reader.interfaces.api.aplicacao:app
+```
+
+### Precedência de Configuração
+
+Variáveis de ambiente **sobrescrevem** valores do `.env`. Assim:
+
+- **Em desenvolvimento:** Use `.env` para manter valores padrão
+- **Em container/CI:** Configure pelo ambiente — garante que o segredo não seja versionado acidentalmente
+
+### Variáveis Disponíveis
 
 | Variável | Padrão | Descrição |
 |----------|--------|-----------|
-| `OCR_READER_HOSTS_PERMITIDOS` | `*.blob.core.windows.net` | Lista de padrões de host aceitos (separados por vírgula) |
+| `OCR_READER_HOSTS_PERMITIDOS` | `["*.blob.core.windows.net"]` | JSON array de padrões de host aceitos (barreira SSRF) |
 | `OCR_READER_TAMANHO_MAXIMO_EM_BYTES` | 524.288.000 (500 MB) | Tamanho máximo de arquivo aceito |
 | `OCR_READER_JANELA_DE_CABECALHO_EM_BYTES` | 8.192 (8 KiB) | Janela inicial de leitura para detecção de tipo |
 | `OCR_READER_JANELA_AMPLIADA_EM_BYTES` | 524.288 (512 KiB) | Janela estendida para redetecção (caso OOXML ambíguo) |
 | `OCR_READER_TIMEOUT_EM_SEGUNDOS` | 10.0 | Timeout de requisições HTTP |
-| `OCR_READER_ENDPOINT_DO_DOCUMENT_INTELLIGENCE` | (vazio) | **Obrigatório em produção.** Endpoint do Azure Document Intelligence (ex.: `https://seu-recurso.cognitiveservices.azure.com`) |
-| `OCR_READER_CHAVE_DO_DOCUMENT_INTELLIGENCE` | (vazio) | **Obrigatório em produção. Credencial.** Chave de acesso (subscription key) do Azure Document Intelligence. **Nunca comitar.** |
-| `OCR_READER_ID_DO_MODELO_DE_OCR` | `prebuilt-read` | ID do modelo de OCR no Azure (não altere a menos que Azure offereça outro) |
-| `OCR_READER_VERSAO_DA_API_DE_OCR` | `2024-11-30` | Versão da API do Document Intelligence (compatível com o endpoint) |
+| `OCR_READER_ENDPOINT_DO_DOCUMENT_INTELLIGENCE` | (vazio) | **Obrigatório para OCR.** Endpoint do Azure Document Intelligence |
+| `OCR_READER_CHAVE_DO_DOCUMENT_INTELLIGENCE` | (vazio) | **Obrigatório para OCR. Segredo.** Chave de acesso do Azure Document Intelligence |
+| `OCR_READER_ID_DO_MODELO_DE_OCR` | `prebuilt-read` | Modelo de OCR no Azure |
+| `OCR_READER_VERSAO_DA_API_DE_OCR` | `2024-11-30` | Versão da API do Document Intelligence |
 
-#### Exemplo: Configuração para produção com Azure Document Intelligence
-
-```bash
-# Validação de blob
-export OCR_READER_HOSTS_PERMITIDOS="*.blob.core.windows.net"
-export OCR_READER_TAMANHO_MAXIMO_EM_BYTES=524288000
-
-# Azure Document Intelligence — obrigatórios para OCR funcionar
-export OCR_READER_ENDPOINT_DO_DOCUMENT_INTELLIGENCE="https://seu-recurso.cognitiveservices.azure.com"
-export OCR_READER_CHAVE_DO_DOCUMENT_INTELLIGENCE="sua-chave-de-acesso-aqui"
-
-# Rodar a API
-uv run uvicorn ocr_reader.interfaces.api.aplicacao:app --host 0.0.0.0 --port 8000
-```
-
-⚠️ **Segurança:** A chave do Document Intelligence é um segredo. **Nunca a comite no repositório.** Use um arquivo `.env` local (adicionado a `.gitignore`) ou um serviço de secrets em produção.
+**Nota sobre `HOSTS_PERMITIDOS`:** No `.env`, use JSON array: `["*.blob.core.windows.net"]` ou `["*.blob.core.windows.net", "meu-dominio.blob.core.windows.net"]`. Com `export`, a sintaxe é a mesma.
 
 ## Segurança
 
