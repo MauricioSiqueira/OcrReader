@@ -1,0 +1,50 @@
+[project]
+name = "ocr-reader"
+version = "0.1.0"
+description = "API que valida documentos remotos e delega OCR ao Azure Document Intelligence."
+authors = [
+    { name = "Maurice", email = "133719290+MauricioSiqueira@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "httpx>=0.27",
+    "python-magic>=0.4.27",
+    "pydantic-settings>=2.5",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.7",
+    "black>=24.10",
+    "mypy>=1.13",
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src"]
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"
