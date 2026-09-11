@@ -26,6 +26,7 @@ from ocr_reader.domain.modelos.extracao import (
     ResultadoDaExtracao,
     SituacaoDaExtracao,
 )
+from ocr_reader.domain.modelos.tipo_de_arquivo import TipoDeArquivo
 from ocr_reader.infrastructure.configuracao import Configuracao
 from ocr_reader.interfaces.api.aplicacao import criar_aplicacao
 from ocr_reader.interfaces.api.dependencias import (
@@ -94,7 +95,9 @@ def _criar_cliente(
 def test_post_extracoes_com_uri_valido_retorna_202_com_id_e_location() -> None:
     caso_de_uso_falso = _CasoDeUsoDeSolicitacaoFalso(
         extracao_solicitada=ExtracaoSolicitada(
-            identificador=IdentificadorDaExtracao(valor="op-123")
+            identificador=IdentificadorDaExtracao(valor="op-123"),
+            tipo_de_arquivo=TipoDeArquivo.PDF,
+            tamanho_em_bytes=54321,
         )
     )
 
