@@ -50,4 +50,4 @@ repetir `export` a cada sessão de terminal — sem que o segredo entre no repos
 
 - [x] **dev** (`Naja`) — implementação + testes
 - [x] **docs** (`Papiro`) — docstrings e documentação
-- [ ] **git** (`Cais`) — commits e PR
+- [x] **git** (`Cais`) — 3 commits, push, PR #3 aberta
