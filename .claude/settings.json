@@ -39,6 +39,7 @@
       "Bash(git reset --hard:*)",
       "Bash(git clean:*)",
       "Bash(rm -rf:*)",
+      "Bash(az *)",
       "Read(/Users/mauricio/Documents/orc/.env)",
       "Read(/Users/mauricio/Documents/orc/.env.*)"
     ]

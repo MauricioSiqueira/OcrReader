@@ -24,6 +24,7 @@ from ocr_reader.infrastructure.configuracao import Configuracao
 from ocr_reader.infrastructure.deteccao.detector_libmagic import DetectorLibmagic
 from ocr_reader.infrastructure.http.leitor_de_bytes_httpx import LeitorDeBytesHttpx
 from ocr_reader.interfaces.api.rotas.extracoes import roteador as roteador_de_extracoes
+from ocr_reader.interfaces.api.rotas.saude import roteador as roteador_de_saude
 from ocr_reader.interfaces.api.tratadores_de_erro import registrar_tratadores_de_erro
 
 
@@ -67,6 +68,7 @@ def criar_aplicacao() -> FastAPI:
     """Constrói a instância da aplicação FastAPI com rotas e tratadores de erro registrados."""
     app = FastAPI(title="ocr-reader", lifespan=_ciclo_de_vida)
     app.include_router(roteador_de_extracoes)
+    app.include_router(roteador_de_saude)
     registrar_tratadores_de_erro(app)
     return app
 
