@@ -18,13 +18,20 @@ VERSAO_DA_API_DE_OCR_PADRAO = "2024-11-30"
 
 
 class Configuracao(BaseSettings):
-    """Configuração operacional da validação de documento remoto.
+    """Configuração operacional da validação de documento remoto e extração de texto.
 
-    Cada campo pode ser sobrescrito por variável de ambiente com prefixo `OCR_READER_`
-    (ex.: `OCR_READER_TAMANHO_MAXIMO_EM_BYTES`).
+    Lê valores em ordem de precedência:
+    1. Variáveis de ambiente com prefixo `OCR_READER_` (ex.: `OCR_READER_TAMANHO_MAXIMO_EM_BYTES`)
+    2. Arquivo `.env` na raiz do projeto (se existir)
+    3. Padrões hardcoded em cada campo
+
+    Variáveis de ambiente **sobrescrevem** valores do `.env`, garantindo que em container ou CI
+    a configuração chegue seguramente pelo ambiente sem ser afetada por um arquivo esquecido.
     """
 
-    model_config = SettingsConfigDict(env_prefix="OCR_READER_")
+    model_config = SettingsConfigDict(
+        env_prefix="OCR_READER_", env_file=".env", env_file_encoding="utf-8"
+    )
 
     hosts_permitidos: list[str] = Field(default_factory=lambda: list(HOSTS_PERMITIDOS_PADRAO))
     tamanho_maximo_em_bytes: int = TAMANHO_MAXIMO_PADRAO_EM_BYTES
