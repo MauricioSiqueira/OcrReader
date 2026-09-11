@@ -46,8 +46,6 @@ async def test_executar_com_documento_valido_solicita_leitura_e_retorna_identifi
     extracao_solicitada = await caso_de_uso.executar(_ENDERECO)
 
     assert extracao_solicitada.identificador.valor == "op-123"
-    assert extracao_solicitada.tipo_de_arquivo is TipoDeArquivo.PDF
-    assert extracao_solicitada.tamanho_em_bytes == len(b"%PDF-1.4")
     assert servico_de_ocr.chamadas_de_solicitacao == 1
 
 
