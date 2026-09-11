@@ -69,4 +69,4 @@ o tipo é aceito — sem baixar o arquivo inteiro e sem ainda chamar o Document 
 
 - [x] **dev** (`Naja`) — implementação + testes
 - [x] **docs** (`Papiro`) — docstrings e documentação
-- [ ] **git** (`Cais`) — commits e PR
+- [x] **git** (`Cais`) — 5 commits, push, PR #1 aberta
