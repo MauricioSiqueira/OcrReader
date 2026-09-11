@@ -94,6 +94,56 @@ async def test_obter_leitura_concluida_retorna_resultado_com_texto(
 
     assert resultado.situacao is SituacaoDaExtracao.CONCLUIDA
     assert resultado.texto == "ola mundo"
+    assert resultado.metricas is None
+
+
+async def test_obter_leitura_concluida_com_datas_e_paginas_calcula_metricas(
+    servidor: ServidorDocumentIntelligenceFalso, servico: ServicoDeOcrDocumentIntelligence
+) -> None:
+    # Formato real de resposta do Azure: ISO 8601 com sufixo "Z" e frações de segundo.
+    servidor.corpo_da_consulta = {
+        "status": "succeeded",
+        "createdDateTime": "2026-01-01T10:00:00.000Z",
+        "lastUpdatedDateTime": "2026-01-01T10:00:03.250Z",
+        "analyzeResult": {"content": "ola mundo", "pages": [{}, {}, {}]},
+    }
+
+    resultado = await servico.obter_leitura(IdentificadorDaExtracao(valor=servidor.operation_id))
+
+    assert resultado.metricas is not None
+    assert resultado.metricas.duracao_do_ocr_em_ms == 3250
+    assert resultado.metricas.quantidade_de_paginas == 3
+
+
+async def test_obter_leitura_concluida_sem_datas_retorna_metricas_none_sem_quebrar(
+    servidor: ServidorDocumentIntelligenceFalso, servico: ServicoDeOcrDocumentIntelligence
+) -> None:
+    servidor.corpo_da_consulta = {
+        "status": "succeeded",
+        "analyzeResult": {"content": "ola mundo", "pages": [{}, {}, {}]},
+    }
+
+    resultado = await servico.obter_leitura(IdentificadorDaExtracao(valor=servidor.operation_id))
+
+    assert resultado.situacao is SituacaoDaExtracao.CONCLUIDA
+    assert resultado.texto == "ola mundo"
+    assert resultado.metricas is None
+
+
+async def test_obter_leitura_concluida_sem_pages_retorna_metricas_none_sem_quebrar(
+    servidor: ServidorDocumentIntelligenceFalso, servico: ServicoDeOcrDocumentIntelligence
+) -> None:
+    servidor.corpo_da_consulta = {
+        "status": "succeeded",
+        "createdDateTime": "2026-01-01T10:00:00Z",
+        "lastUpdatedDateTime": "2026-01-01T10:00:03Z",
+        "analyzeResult": {"content": "ola mundo"},
+    }
+
+    resultado = await servico.obter_leitura(IdentificadorDaExtracao(valor=servidor.operation_id))
+
+    assert resultado.situacao is SituacaoDaExtracao.CONCLUIDA
+    assert resultado.metricas is None
 
 
 async def test_obter_leitura_com_status_failed_retorna_resultado_com_situacao_falhou(

@@ -24,6 +24,7 @@ cliente, sem montar credencial à mão aqui. Confirmado com o mesmo servidor de 
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any
 
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
@@ -35,6 +36,7 @@ from ocr_reader.domain.erros import ExtracaoNaoEncontrada, ServicoDeOcrIndisponi
 from ocr_reader.domain.modelos.endereco_de_blob import EnderecoDeBlob
 from ocr_reader.domain.modelos.extracao import (
     IdentificadorDaExtracao,
+    MetricasDaExtracao,
     ResultadoDaExtracao,
     SituacaoDaExtracao,
 )
@@ -43,6 +45,7 @@ _CHAVE_DO_OPERATION_ID = "operation_id"
 _SITUACOES_EM_PROCESSAMENTO = frozenset({"notStarted", "running"})
 _SITUACAO_CONCLUIDA = "succeeded"
 _SITUACAO_FALHOU = "failed"
+_MILISSEGUNDOS_POR_SEGUNDO = 1_000
 
 
 class ServicoDeOcrDocumentIntelligence:
@@ -129,9 +132,33 @@ def _resultado_a_partir_do_corpo(corpo: dict[str, Any]) -> ResultadoDaExtracao:
 
     if situacao == _SITUACAO_CONCLUIDA:
         texto = corpo.get("analyzeResult", {}).get("content", "")
-        return ResultadoDaExtracao(situacao=SituacaoDaExtracao.CONCLUIDA, texto=texto)
+        return ResultadoDaExtracao(
+            situacao=SituacaoDaExtracao.CONCLUIDA,
+            texto=texto,
+            metricas=_calcular_metricas(corpo),
+        )
 
     if situacao == _SITUACAO_FALHOU:
         return ResultadoDaExtracao(situacao=SituacaoDaExtracao.FALHOU)
 
     raise ServicoDeOcrIndisponivel("O serviço de OCR devolveu uma situação desconhecida.")
+
+
+def _calcular_metricas(corpo: dict[str, Any]) -> MetricasDaExtracao | None:
+    """Calcula as métricas de processamento a partir do corpo de `analyzeResults`.
+
+    Nunca levanta exceção: se algum campo necessário estiver ausente ou em formato inesperado,
+    devolve `None` — métrica ausente não pode derrubar a requisição.
+    """
+    try:
+        criado_em = datetime.fromisoformat(corpo["createdDateTime"])
+        atualizado_em = datetime.fromisoformat(corpo["lastUpdatedDateTime"])
+        quantidade_de_paginas = len(corpo["analyzeResult"]["pages"])
+    except (KeyError, TypeError, ValueError):
+        return None
+
+    duracao_em_segundos = (atualizado_em - criado_em).total_seconds()
+    return MetricasDaExtracao(
+        duracao_do_ocr_em_ms=round(duracao_em_segundos * _MILISSEGUNDOS_POR_SEGUNDO),
+        quantidade_de_paginas=quantidade_de_paginas,
+    )

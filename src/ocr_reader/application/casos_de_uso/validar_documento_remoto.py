@@ -18,9 +18,11 @@ class VeredictoDeValidacao:
     Attributes:
         tipo_de_arquivo: Tipo de arquivo detectado no blob, garantido estar entre os
             aceitos pela API.
+        tamanho_em_bytes: Tamanho total do documento, lido do `Content-Range` do blob remoto.
     """
 
     tipo_de_arquivo: TipoDeArquivo
+    tamanho_em_bytes: int
 
 
 class ValidarDocumentoRemoto:
@@ -63,7 +65,9 @@ class ValidarDocumentoRemoto:
         if tipo_de_arquivo is None:
             raise TipoDeArquivoNaoSuportado("Tipo de arquivo não está entre os aceitos.")
 
-        return VeredictoDeValidacao(tipo_de_arquivo=tipo_de_arquivo)
+        return VeredictoDeValidacao(
+            tipo_de_arquivo=tipo_de_arquivo, tamanho_em_bytes=cabecalho.tamanho_total_em_bytes
+        )
 
     def _verificar_tamanho(self, tamanho_total_em_bytes: int) -> None:
         """Levanta `ArquivoExcedeLimite` se o tamanho total ultrapassa o limite configurado."""
