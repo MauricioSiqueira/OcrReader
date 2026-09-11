@@ -1,4 +1,4 @@
-"""Exceções de domínio da validação de documento remoto."""
+"""Exceções de domínio da validação de documento remoto e da extração de texto via OCR."""
 
 from __future__ import annotations
 
@@ -21,3 +21,11 @@ class ArquivoExcedeLimite(ErroDeDominio):
 
 class DocumentoInacessivel(ErroDeDominio):
     """O blob remoto não pôde ser lido: rede, autorização ou SAS expirado."""
+
+
+class ExtracaoNaoEncontrada(ErroDeDominio):
+    """Não existe extração com o identificador informado."""
+
+
+class ServicoDeOcrIndisponivel(ErroDeDominio):
+    """O serviço de OCR não pôde ser acionado, falhou ao processar ou não pôde ser consultado."""

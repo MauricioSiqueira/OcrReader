@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from ocr_reader.domain.modelos.tipo_de_arquivo import TipoDeArquivo
+from ocr_reader.domain.modelos.extracao import SituacaoDaExtracao
 
 
 class SolicitacaoDeExtracaoDTO(BaseModel):
@@ -15,12 +15,20 @@ class SolicitacaoDeExtracaoDTO(BaseModel):
     sas_uri: str = Field(alias="sasUri")
 
 
-class RespostaDeValidacaoDTO(BaseModel):
-    """Corpo da resposta de sucesso da validação do documento remoto."""
+class RespostaDeSolicitacaoDTO(BaseModel):
+    """Corpo da resposta de aceite da solicitação de extração (`202`)."""
 
     model_config = ConfigDict(populate_by_name=True)
 
-    tipo_de_arquivo: TipoDeArquivo = Field(alias="tipoDeArquivo")
+    id_extracao: str = Field(alias="idExtracao")
+    situacao: SituacaoDaExtracao
+
+
+class RespostaDeConsultaDTO(BaseModel):
+    """Corpo da resposta de consulta de uma extração: `200` quando concluída, `202` em processo."""
+
+    situacao: SituacaoDaExtracao
+    texto: str | None = None
 
 
 class ErroDTO(BaseModel):

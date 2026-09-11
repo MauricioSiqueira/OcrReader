@@ -15,6 +15,8 @@ from ocr_reader.domain.erros import (
     ArquivoExcedeLimite,
     DocumentoInacessivel,
     EnderecoInvalido,
+    ExtracaoNaoEncontrada,
+    ServicoDeOcrIndisponivel,
     TipoDeArquivoNaoSuportado,
 )
 
@@ -23,6 +25,8 @@ _MAPA_DE_STATUS_POR_ERRO: dict[type[Exception], int] = {
     TipoDeArquivoNaoSuportado: status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
     ArquivoExcedeLimite: status.HTTP_413_CONTENT_TOO_LARGE,
     DocumentoInacessivel: status.HTTP_502_BAD_GATEWAY,
+    ExtracaoNaoEncontrada: status.HTTP_404_NOT_FOUND,
+    ServicoDeOcrIndisponivel: status.HTTP_502_BAD_GATEWAY,
 }
 
 

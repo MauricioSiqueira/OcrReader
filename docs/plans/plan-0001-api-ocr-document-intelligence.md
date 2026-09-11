@@ -1,8 +1,8 @@
 # plan-0001 — API de OCR sobre Azure Document Intelligence
 
 **Estado:** aprovado pelo usuário em 2026-09-11
-**Tarefa em curso:** `docs/tasks/feat-0001-fundacao-e-validacao-de-documento-remoto.md`
-**Tarefa seguinte:** `feat-0002`, a ser escrita quando a `feat-0001` for integrada
+**Tarefa concluída:** `docs/tasks/feat-0001-fundacao-e-validacao-de-documento-remoto.md` (PR #1, mesclada)
+**Tarefa em curso:** `docs/tasks/feat-0002-ocr-via-azure-document-intelligence.md`
 
 ## Contexto
 

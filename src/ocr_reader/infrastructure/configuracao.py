@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from pydantic import Field
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _UM_KIBIBYTE_EM_BYTES = 1024
@@ -13,6 +13,8 @@ JANELA_DE_CABECALHO_PADRAO_EM_BYTES = 8 * _UM_KIBIBYTE_EM_BYTES
 JANELA_AMPLIADA_PADRAO_EM_BYTES = 512 * _UM_KIBIBYTE_EM_BYTES
 TIMEOUT_PADRAO_EM_SEGUNDOS = 10.0
 HOSTS_PERMITIDOS_PADRAO = ("*.blob.core.windows.net",)
+ID_DO_MODELO_DE_OCR_PADRAO = "prebuilt-read"
+VERSAO_DA_API_DE_OCR_PADRAO = "2024-11-30"
 
 
 class Configuracao(BaseSettings):
@@ -29,3 +31,8 @@ class Configuracao(BaseSettings):
     janela_de_cabecalho_em_bytes: int = JANELA_DE_CABECALHO_PADRAO_EM_BYTES
     janela_ampliada_em_bytes: int = JANELA_AMPLIADA_PADRAO_EM_BYTES
     timeout_em_segundos: float = TIMEOUT_PADRAO_EM_SEGUNDOS
+
+    endpoint_do_document_intelligence: str = ""
+    chave_do_document_intelligence: SecretStr = SecretStr("")
+    id_do_modelo_de_ocr: str = ID_DO_MODELO_DE_OCR_PADRAO
+    versao_da_api_de_ocr: str = VERSAO_DA_API_DE_OCR_PADRAO
