@@ -35,3 +35,9 @@ class ErroDTO(BaseModel):
     """Corpo padrão de resposta de erro."""
 
     detalhe: str
+
+
+class RespostaDeSaudeDTO(BaseModel):
+    """Corpo da resposta de `GET /health`."""
+
+    situacao: str = "ok"
