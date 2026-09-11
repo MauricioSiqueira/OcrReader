@@ -115,6 +115,33 @@ Resposta quando concluída (200 OK):
 - `404 Not Found`: ID de extração não existe
 - `502 Bad Gateway`: Falha no serviço de OCR
 
+#### 3. GET /health — Verificar se o processo está vivo
+
+Resposta (200 OK):
+
+```json
+{
+  "situacao": "ok"
+}
+```
+
+**O que é:**
+Esta é uma **rota de liveness**, não readiness. Ela confirma que o **processo está de pé e atendendo requisições**. Ela **não** verifica:
+- Conectividade com o Azure Document Intelligence
+- Validade das credenciais ou configuração
+- Saúde de nenhuma dependência externa
+
+Um `200 OK` aqui significa *"você pode me enviar uma requisição"*, não *"sua extração de texto vai funcionar"*.
+
+**Por que não consultar dependências:**
+Health check que verifica serviços externos é uma forma clássica de derrubar um sistema saudável. Se o Azure sofrer uma instabilidade momentânea, o orquestrador (Kubernetes, App Service, etc.) reiniciaria processos que estão funcionando perfeitamente — piorando a situação em vez de melhorar.
+
+**Funciona sem configuração:**
+A rota responde `200` mesmo que as variáveis `OCR_READER_ENDPOINT_DO_DOCUMENT_INTELLIGENCE` e `OCR_READER_CHAVE_DO_DOCUMENT_INTELLIGENCE` estejam ausentes. Assim, um orquestrador consegue saber que o processo está vivo antes de passá-lo configuração.
+
+**Nota sobre o caminho:**
+O caminho é `/health` em inglês — diferente do resto do projeto — porque é o que ferramentas de infraestrutura sonda por padrão. Um nome como `/saude` exigiria configuração extra em Kubernetes, App Service, Elastic Beanstalk, etc.
+
 ## Testes Automatizados
 
 Executar a suíte de testes:
