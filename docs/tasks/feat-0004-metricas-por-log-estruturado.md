@@ -69,4 +69,4 @@ por fora.
 
 - [x] **dev** (`Naja`) — implementação + testes
 - [x] **docs** (`Papiro`) — docstrings e documentação
-- [ ] **git** (`Cais`) — commits e PR
+- [x] **git** (`Cais`) — 4 commits, push, PR #4 aberta
